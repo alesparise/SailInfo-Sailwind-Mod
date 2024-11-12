@@ -9,7 +9,9 @@
 	• Boat Speed (kts. Disabled by default).
 	• Boat Heading (degrees or cardinal. Disabled by default);  
 	• Boat velocity made good(VMG) (kts, Disabled by default;  
-	• Boat heeling (degrees, Disabled by default, experimental).  
+	• Boat heeling (degrees, Disabled by default);  
+	• Coordinates (degrees, minutes. Disabled by default);  
+• Shows global and/or local time when looking at a clock (Disabled by default).  
   
 **Configuration notes:** You can configure the mod quite a bit in what it shows. In order to do so, install the mod, run the game once, close it and navigate to the *...\Sailwind\BepInEx\config* folder. Find a file called *pr0skynesis.sailinfo.cfg*. Open it with a text editor and change the values of thing you want to disable to false.   
   
@@ -22,6 +24,6 @@ Exact wind direction in degrees could also be seen as cheaty or immersion breaki
 	
 **Requirements: Requires BepInEx**  
 **Installation:** Download SailInfo.dll and move it into the *...\Sailwind\BepInEx\plugins* folder.  
-**Game version:** *0.27+*  (won't work in version 0.26 and below) 
-**Mod Version:** *1.1.8*  
+**Game version:** *0.27+*  (won't work in version 0.26 and below)   
+**Mod Version:** *1.1.9*  
 **Warning:** Making a backup of your save is advisable before installing new mods, however this mod should not cause any issue with saves.  
