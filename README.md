@@ -25,5 +25,5 @@ Exact wind direction in degrees could also be seen as cheaty or immersion breaki
 **Requirements: Requires BepInEx**  
 **Installation:** Download SailInfo.dll and move it into the *...\Sailwind\BepInEx\plugins* folder.  
 **Game version:** *0.27+*  (won't work in version 0.26 and below)   
-**Mod Version:** *1.1.9*  
+**Mod Version:** *1.1.10*  
 **Warning:** Making a backup of your save is advisable before installing new mods, however this mod should not cause any issue with saves.  
