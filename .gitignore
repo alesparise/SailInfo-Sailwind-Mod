@@ -1,0 +1,17 @@
+# Ignore build output directories
+bin/
+obj/
+
+# Ignore Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore specific folders like "thunderstore"
+thunderstore/
+
+# Ignore other unnecessary files
+*.dll
+*.exe
