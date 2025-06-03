@@ -1,26 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using BepInEx;
+﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
-using System.Dynamic;
+using System.Reflection;
+using System.Text;
+using UnityEngine;
 //poorly written by pr0skynesis (discord username)
 
 namespace SailInfo
-{
+{   /// <summary>
+    /// CHANGELOG: v1.1.11
+    /// • Fixed coordinates not being accurate
+    /// • Changed coordinates to decimal system
+    /// TODO: v1.2.0
+    /// • Complete code rework and improvements in efficiency
+    /// • Add Center of Effort indicator in the shipyard
+    /// • Improve the winch color system and sail naming system
+    /// • Add sail force viewer (maybe as a debug tool only?) 
+    /// • More informations might be worth adding to the shipyard infobox:
+    ///     - Total sail area
+    ///     - Some kind of representation of expected upwind and downwind performances
+    ///     - Total weight of the current setup
+    /// • Telltales on sail to communicate sail efficiency, they get straighter the more efficient the sail is.
+    /// • Wind particles, water sprays, etc. to show wind direction and speed
+    /// • Spatialized wind sounds to give wind direction and speed based on where you look at
+    /// </summary>
     [BepInPlugin(pluginGuid, pluginName, pluginVersion)]
     public class SailInfoMain : BaseUnityPlugin
     {
         // Necessary plugin info
         public const string pluginGuid = "pr0skynesis.sailinfo";
         public const string pluginName = "SailInfo";
-        public const string pluginVersion = "2.0.0"; //ALREADY CHANGED FOR CLOCK AND STUFF VERSION
+        public const string pluginVersion = "1.1.11"; //big wip rework should be 1.2.0 //1.1.11 was the coordinate hotfix, unreleased
 
         //config file info
         //MAIN SWITCHES
@@ -153,6 +167,13 @@ namespace SailInfo
             if (rudderHUDConfig.Value)
             {
                 harmony.Patch(original2, new HarmonyMethod(patch2)); //rudder HUD
+                if (Chainloader.PluginInfos.ContainsKey("pr0skynesis.dinghies"))
+                {
+                }
+                if (Chainloader.PluginInfos.ContainsKey("pr0skynesis.paraw"))
+                {
+
+                }
             }
             //CLOCK PATCH
             harmony.Patch(original5, new HarmonyMethod(patch5));
@@ -340,7 +361,7 @@ namespace SailInfo
                 }
                 if (SailInfoMain.showGlobalTimeConfig.Value)
                 {   //global time
-                    
+
                     float time = Sun.sun.globalTime;
                     __instance.description += $"\n\n{GetTime(time)}";
                 }
@@ -434,7 +455,7 @@ namespace SailInfo
                     {
                         if (component.squareSail)
                         {
-                            if(!topsail)
+                            if (!topsail)
                             {   //it's not a topsail square, we only have the lower winches so skip everything else.
                                 WinchColor(left[0], winchColorIndex);
                                 WinchColor(right[0], winchColorIndex);
