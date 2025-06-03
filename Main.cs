@@ -1,25 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using BepInEx;
+﻿using BepInEx;
+using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
-using UnityEngine;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Security.Claims;
+using System.Reflection;
+using System.Text;
+using UnityEngine;
 //poorly written by pr0skynesis (discord username)
 
 namespace SailInfo
-{
+{   /// <summary>
+    /// CHANGELOG: v1.1.11
+    /// • Fixed coordinates not being accurate
+    /// • Changed coordinates to decimal system
+    /// TODO: v1.2.0
+    /// • Complete code rework and improvements in efficiency
+    /// • Add Center of Effort indicator in the shipyard
+    /// • Improve the winch color system and sail naming system
+    /// • Add sail force viewer (maybe as a debug tool only?) 
+    /// • More informations might be worth adding to the shipyard infobox:
+    ///     - Total sail area
+    ///     - Some kind of representation of expected upwind and downwind performances
+    ///     - Total weight of the current setup
+    /// • Telltales on sail to communicate sail efficiency, they get straighter the more efficient the sail is.
+    /// • Wind particles, water sprays, etc. to show wind direction and speed
+    /// • Spatialized wind sounds to give wind direction and speed based on where you look at
+    /// </summary>
     [BepInPlugin(pluginGuid, pluginName, pluginVersion)]
     public class SailInfoMain : BaseUnityPlugin
     {
         // Necessary plugin info
         public const string pluginGuid = "pr0skynesis.sailinfo";
         public const string pluginName = "SailInfo";
-        public const string pluginVersion = "1.1.10"; //ALREADY CHANGED FOR CLOCK AND STUFF VERSION
+        public const string pluginVersion = "1.1.11"; //big wip rework should be 1.2.0 //1.1.11 was the coordinate hotfix, unreleased
 
         //config file info
         //MAIN SWITCHES
@@ -54,7 +69,7 @@ namespace SailInfo
         public static ConfigEntry<bool> boatHeadingConfig; //enables boat heading display
         public static ConfigEntry<bool> approximateBoatHeading; //makes the heading display show approximate cardinal directions (N, NW, SSW, etc.)
         //Boat Speed
-        public static ConfigEntry <bool> boatSpeedConfig;   //enables the boat speed display
+        public static ConfigEntry<bool> boatSpeedConfig;   //enables the boat speed display
         public static ConfigEntry<bool> boatVMGConfig;      //enables VMG display
         public static ConfigEntry<bool> nauticalMilePerHourConfig; //displays speed in nautical mile per hour (they are kts / 1.555)
         //boat heeling
@@ -128,15 +143,6 @@ namespace SailInfo
             //clock
             MethodInfo original5 = AccessTools.Method(typeof(ShipItemClock), "ExtraLateUpdate");
             MethodInfo patch5 = AccessTools.Method(typeof(SailInfoPatches), "ClockPatch");
-            //quadrant
-            //MethodInfo original6 = AccessTools.Method(typeof(ShipItemQuadrant), "ExtraLateUpdate");
-            //MethodInfo patch6 = AccessTools.Method(typeof(SailInfoPatches), "QuadrantPatch");
-            //MethodInfo original7 = AccessTools.Method(typeof(ShipItemQuadrant), "OnPickup");
-            //MethodInfo patch7 = AccessTools.Method(typeof(SailInfoPatches), "QuadrantOnPickupPatch");
-            //MethodInfo original8 = AccessTools.Method(typeof(ShipItemQuadrant), "OnDrop");
-            //MethodInfo patch8 = AccessTools.Method(typeof(SailInfoPatches), "QuadrantOnDropPatch");
-            //MethodInfo original9 = AccessTools.Method(typeof(ShipItemQuadrant), "OnLeaveInventory");
-            //MethodInfo patch9 = AccessTools.Method(typeof(SailInfoPatches), "QuadrantLeaveInventoryPatch");
 
             //PATCH APPLICATION
             if (winchesInfoConfig.Value)
@@ -151,6 +157,13 @@ namespace SailInfo
             if (rudderHUDConfig.Value)
             {
                 harmony.Patch(original2, new HarmonyMethod(patch2)); //rudder HUD
+                if (Chainloader.PluginInfos.ContainsKey("pr0skynesis.dinghies"))
+                {
+                }
+                if (Chainloader.PluginInfos.ContainsKey("pr0skynesis.paraw"))
+                {
+
+                }
             }
             //CLOCK PATCH
             harmony.Patch(original5, new HarmonyMethod(patch5));
@@ -169,8 +182,6 @@ namespace SailInfo
         public static Dictionary<Sail, List<RopeController>> sailRopeControllerMap = new Dictionary<Sail, List<RopeController>>();
         public static int winchColorIndex = 0;
         public static Color[] colorArray = { Color.black, Color.blue, Color.cyan, Color.gray, Color.green, Color.magenta, Color.red, Color.white, Color.yellow };
-        //quadrant
-        private static bool quadrantHeld;
 
         //WINCHES METHODS
         [HarmonyPrefix] //patch happens before original
@@ -734,7 +745,7 @@ namespace SailInfo
                 }
                 if (SailInfoMain.showGlobalTimeConfig.Value)
                 {   //global time
-                    
+
                     float time = Sun.sun.globalTime;
                     __instance.description += $"\n\n{GetTime(time)}";
                 }
@@ -758,68 +769,41 @@ namespace SailInfo
                 return $"{hours}:{min}";
             }
         }
-        [HarmonyPrefix]
-        public static void QuadrantPatch()
-        {   //shows either the latitude or the reading when inspecting the quadrant
-            //DEBUG: ISSUE: Using recoveryText like this breaks all other instances of recovery text...
-            //SOLUTION: Maybe I don't need this to be in the Update patch! If I only show the lat...
-            //          If I wanna show the reading though, the UpdatePatch would be required I guess...
-            //          Maybe I can create a copy of recoveryText?
-            //RELEASE: all the Quadrant Patches are left there but not implemented. Might become useful in the future.
-            if (quadrantHeld)
-            {
-                Sleep.instance.recoveryText.text = $"<size=20%>\n\n\nLat: {Latitude()}</size>";
-            }
-            else
-            {
-                Sleep.instance.recoveryText.text = "";
-            }
-        }
-        [HarmonyPrefix]
-        public static void QuadrantOnPickupPatch()
-        {   //detects the quadrant being picked up
-            quadrantHeld = true;
-        }
-        [HarmonyPrefix]
-        public static void QuadrantOnDropPatch()
-        {   //detects the quadrant being dropped or put in the inventory
-            quadrantHeld = false;
-        }
-        [HarmonyPrefix]
-        public static void QuadrantLeaveInventoryPatch()
-        {   //detects quadrant leaving the inventory
-            quadrantHeld = true;
-        }
-
         private static string Latitude()
         {   //get latitude
-            Transform pos = Refs.charController.transform;
+            Transform pos = FloatingOriginManager.instance.shifterObject;
             float lat = FloatingOriginManager.instance.GetGlobeCoords(pos).z;
-            int deg = (int)lat;
-            int min = (int)((lat - deg) * 60);
-            if( deg >= 0)
-            {
-                return $"{deg}° {min}'N";
-            }
-            else
-            {
-                return $"{deg}° {min}'S";
-            }
+
+            return lat >= 0 ? $"{lat:F2}° N" : $"{lat:F2}° S";
+
+            //int deg = (int)lat;
+            //int min = (int)((lat - deg) * 60);
+            //if (deg >= 0)
+            //{
+            //    return $"{deg}° {min}'N";
+            //}
+            //else
+            //{
+            //    return $"{deg}° {min}'S";
+            //}
         }
         private static string Longitude()
         {   //get longitude
-            Transform pos = Refs.charController.transform;
+            Transform pos = FloatingOriginManager.instance.shifterObject;
             float lon = FloatingOriginManager.instance.GetGlobeCoords(pos).x;
-            int deg = (int)lon;
-            int min = (int)((lon - deg) * 60);
-            if (deg >= 0)
-            {
-                return $"{deg}° {min}'E";
-            }
-            else
-            {
-                return $"{deg}° {min}'W";
-            }
+
+            return lon >= 0 ? $"{lon:F2}° E" : $"{lon:F2}° W";
+
+            //int deg = (int)lon;
+            //int min = (int)((lon - deg) * 60);
+            //if (deg >= 0)
+            //{
+            //    return $"{deg}° {min}'E";
+            //}
+            //else
+            //{
+            //    return $"{deg}° {min}'W";
+            //}
         }
 
         //SAIL → WINCHES MAP
@@ -894,7 +878,7 @@ namespace SailInfo
                     {
                         if (component.squareSail)
                         {
-                            if(!topsail)
+                            if (!topsail)
                             {   //it's not a topsail square, we only have the lower winches so skip everything else.
                                 WinchColor(left[0], winchColorIndex);
                                 WinchColor(right[0], winchColorIndex);
