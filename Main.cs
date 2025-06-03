@@ -139,24 +139,13 @@ namespace SailInfo
             MethodInfo patch5 = AccessTools.Method(typeof(SailInfoPatches), "ClockPatch");
             MethodInfo original15 = AccessTools.Method(typeof(RopeControllerAnchor), "Start");
             MethodInfo patch15 = AccessTools.Method(typeof(SailInfoPatches), "Capstan_Patch");
-            harmony.Patch(original15, new HarmonyMethod(patch15));
             //quadrant
             //MethodInfo original6 = AccessTools.Method(typeof(ShipItemQuadrant), "ExtraLateUpdate");
-            //MethodInfo patch6 = AccessTools.Method(typeof(QuadrantPatches), "QuadrantPatch");
-            //MethodInfo original7 = AccessTools.Method(typeof(ShipItemQuadrant), "OnPickup");
-            //MethodInfo patch7 = AccessTools.Method(typeof(SailInfoPatches), "QuadrantOnPickupPatch");
-            //MethodInfo original8 = AccessTools.Method(typeof(ShipItemQuadrant), "OnDrop");
-            //MethodInfo patch8 = AccessTools.Method(typeof(SailInfoPatches), "QuadrantOnDropPatch");
-            //MethodInfo original9 = AccessTools.Method(typeof(ShipItemQuadrant), "OnLeaveInventory");
-            //MethodInfo patch9 = AccessTools.Method(typeof(SailInfoPatches), "QuadrantLeaveInventoryPatch");
-
-            /*            MethodInfo original10 = AccessTools.Method(typeof(Sail), "Start");
-                        MethodInfo patch10 = AccessTools.Method(typeof(SailPatch), "Postfix");
-                        harmony.Patch(original10, new HarmonyMethod(patch10));*/
 
             //PATCH APPLICATION
             if (winchesInfoConfig.Value)
             {
+                harmony.Patch(original15, new HarmonyMethod(patch15));
                 harmony.Patch(original, new HarmonyMethod(patch));   //winches info
                 harmony.Patch(original3, new HarmonyMethod(patch3)); //winches info (for the currentSail efficiency stuff)
                 if (coloredWinchesConfig.Value)
