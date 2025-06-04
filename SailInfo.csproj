@@ -64,10 +64,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SailInfoPatches.cs" />
     <Compile Include="WinchInfo.cs" />
     <Compile Include="BoatInfo.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Main.cs" />
+    <Compile Include="SailInfoMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuadrantPatches.cs" />
     <Compile Include="WinchInfoSail.cs" />
