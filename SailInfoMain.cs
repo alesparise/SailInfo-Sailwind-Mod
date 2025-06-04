@@ -12,6 +12,7 @@ namespace SailInfo
     /// • Added more sail names and mast names
     /// • Topmast sail are now renamed correctly
     /// • Added anchor info to the anchor winch
+    /// • Added Tiller compatibility for Paraw and Dinghies mods
     /// 
     /// TODO: v1.3.0
     /// • Complete code rework and improvements in efficiency

@@ -73,6 +73,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WinchInfoSail.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="CHANGELOG.md" />
+    <None Include="README.md" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "SailInfo.dll" "C:\Games\Steam\steamapps\common\Sailwind\BepInEx\plugins"</PostBuildEvent>
