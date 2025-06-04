@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using HarmonyLib;
 
 
 namespace SailInfo
@@ -22,11 +18,11 @@ namespace SailInfo
         public string RudderHUD()
         {
             string text = "";
+            //Wind Speed
             if (SailInfoMain.windSpeedConfig.Value > 0 || SailInfoMain.windDirectionConfig.Value > 0 || SailInfoMain.windRelativeConfig.Value > 0)
             {
                 text = "Wind: ";
             }
-
             if (SailInfoMain.windSpeedConfig.Value == WindSpeedType.Beaufort)
             {
                 text += $"{Beaufort()} ";
@@ -36,6 +32,7 @@ namespace SailInfo
                 text += $"{Mathf.Round(WindForce())} kts ";
             }
 
+            //Wind Direction Absolute
             if (SailInfoMain.windDirectionConfig.Value == HeadingType.Cardinal)
             {
                 text += $"{DirectionNESW(Mathf.Round(WindDirection()))} ";
@@ -45,6 +42,7 @@ namespace SailInfo
                 text += $"{Mathf.Round(WindDirection())}° ";
             }
 
+            //Wind Direction Relative
             if (SailInfoMain.windRelativeConfig.Value == ColorCoding.ColorCoded)
             {
                 float angleToBoat = AngleToBoat();
@@ -56,18 +54,19 @@ namespace SailInfo
                 {
                     text += $"<color=#7C0000>{Mathf.Round(angleToBoat)}°</color>";
                 }
-
             }
             else if (SailInfoMain.windRelativeConfig.Value == ColorCoding.Plain)
             {
                 text += $"{Mathf.Round(AngleToBoat())}°";
             }
 
+            //Boat Stuff
             if (SailInfoMain.boatHeadingConfig.Value != HeadingType.None || SailInfoMain.boatSpeedConfig.Value != SpeedUnits.None || SailInfoMain.boatVMGConfig.Value)
             {
                 text += "\n";
             }
 
+            //Boat Speed
             if (SailInfoMain.boatSpeedConfig.Value == SpeedUnits.NauticalMilesPerHour)
             { // ↓↓ magic number to convert chiplog knots into timescale-adjusted nm/h
                 float timeMultiplier = 80.36f * Sun.sun.initialTimescale;
@@ -78,6 +77,7 @@ namespace SailInfo
                 text += $"SPD: {Mathf.Round(BoatSpeed())} kts ";
             }
 
+            //Boat Heading
             if (SailInfoMain.boatHeadingConfig.Value == HeadingType.Cardinal)
             {
                 text += $"HDG: {DirectionNESW(Mathf.Round(BoatHeading()))} ";
@@ -87,10 +87,13 @@ namespace SailInfo
                 text += $"HDG: {Mathf.Round(BoatHeading())}° ";
             }
 
+            //VMG
             if (SailInfoMain.boatVMGConfig.Value)
             {
                 text += $"VMG: {Mathf.Round(VMG())} kts";
             }
+
+            //Heeling
             if (SailInfoMain.boatHeelingConfig.Value)
             {
                 text += $"\nHeeling {Mathf.Round(Heeling())}°";
@@ -101,6 +104,7 @@ namespace SailInfo
             }
             if (SailInfoMain.rudderBarConfig.Value)
             {
+                //debug: NRE here, also better to remove the GetComponent for performances probably
                 text += $"\n{RudderBar(rudderJoint.GetComponent<Rudder>().currentAngle, rudderJoint.limits.max)}";
             }
             return text;
@@ -197,9 +201,9 @@ namespace SailInfo
             return -BoatSpeed() * Mathf.Cos(angle);
         }
         //private static string PointOfSail()
-        //{   //returns the point of sailComponent in 32-esimes (eg, 1/32 is headwind, I think)
-        //      using things like broad reach, close hauled and so on might be an option. Not sure.
-        //    return "";
+        //{ //returns the point of sailComponent in 32-esimes (eg, 1/32 is headwind, I think)
+        //  using things like broad reach, close hauled and so on might be an option. Not sure.
+        //  return "";
         //}
         private static string Beaufort()
         {   //returns a descriptor text indicating how strong the wind is.
@@ -258,9 +262,6 @@ namespace SailInfo
             int min = (int)((lon - deg) * 60);
 
             return $"{deg}° {min}'{hemisphere}";
-
         }
     }
-
-
 }

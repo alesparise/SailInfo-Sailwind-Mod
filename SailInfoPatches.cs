@@ -9,18 +9,18 @@ namespace SailInfo
         public static Color[] colorArray = { Color.black, Color.blue, Color.cyan, Color.gray, Color.green, Color.magenta, Color.red, Color.white, Color.yellow };
 
         //WINCHES METHODS
-        public static void Update_Patch(GPButtonRopeWinch __instance, GoPointer ___stickyClickedBy, bool ___isLookedAt, bool ___isClicked)
+        public static void UpdatePatch(GPButtonRopeWinch __instance, GoPointer ___stickyClickedBy, bool ___isLookedAt, bool ___isClicked)
         {
             if (___isLookedAt || ___stickyClickedBy || ___isClicked)
             {
                 __instance.description = __instance.rope.GetComponent<WinchInfo>()?.WinchHUD();
             }
         }
-        public static void Capstan_Patch(RopeControllerAnchor __instance)
+        public static void CapstanPatch(RopeControllerAnchor __instance)
         {
             __instance.gameObject.AddComponent<WinchInfo>();
         }
-        public static void WheelUpdate_Patch(GPButtonSteeringWheel __instance, ref string ___description, GoPointer ___stickyClickedBy, bool ___isLookedAt, bool ___isClicked)
+        public static void WheelUpdatePatch(GPButtonSteeringWheel __instance, ref string ___description, GoPointer ___stickyClickedBy, bool ___isLookedAt, bool ___isClicked)
         {
             if (___isLookedAt || ___stickyClickedBy || ___isClicked)
             {
@@ -198,7 +198,7 @@ namespace SailInfo
         }
 
         //SAIL → WINCHES MAP
-        public static void Awake_Patch(Sail ___sail, RopeController ___reefController, RopeController ___angleControllerMid, RopeController ___angleControllerLeft, RopeController ___angleControllerRight)
+        public static void AwakePatch(Sail ___sail, RopeController ___reefController, RopeController ___angleControllerMid, RopeController ___angleControllerLeft, RopeController ___angleControllerRight)
         {
             // Check if any rope controller is not null
             if (___angleControllerMid != null || (___angleControllerLeft != null && ___angleControllerRight != null))
@@ -225,7 +225,7 @@ namespace SailInfo
             }
         }
         //WINCH RECOLORING
-        public static void UpdateControllerAttachments_Patch(Mast __instance)
+        public static void UpdateControllerAttachmentsPatch(Mast __instance)
         {
             if (GameState.currentlyLoading)
             {

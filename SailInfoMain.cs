@@ -120,21 +120,23 @@ namespace SailInfo
             #region Patching Information
             //PATCHES INFO
             Harmony harmony = new Harmony(pluginGuid);
+            //winches
             MethodInfo original = AccessTools.Method(typeof(GPButtonRopeWinch), "Update");
-            MethodInfo patch = AccessTools.Method(typeof(SailInfoPatches), "Update_Patch");
-
+            MethodInfo patch = AccessTools.Method(typeof(SailInfoPatches), "UpdatePatch");
+            //rudder hud
             MethodInfo original2 = AccessTools.Method(typeof(GPButtonSteeringWheel), "ExtraLateUpdate");
-            MethodInfo patch2 = AccessTools.Method(typeof(SailInfoPatches), "WheelUpdate_Patch");
-
+            MethodInfo patch2 = AccessTools.Method(typeof(SailInfoPatches), "WheelUpdatePatch");
+            //map winches
             MethodInfo original3 = AccessTools.Method(typeof(SailConnections), "Awake");
-            MethodInfo patch3 = AccessTools.Method(typeof(SailInfoPatches), "Awake_Patch");
+            MethodInfo patch3 = AccessTools.Method(typeof(SailInfoPatches), "AwakePatch");
+            //color winches
             MethodInfo original4 = AccessTools.Method(typeof(Mast), "UpdateControllerAttachments");
-            MethodInfo patch4 = AccessTools.Method(typeof(SailInfoPatches), "UpdateControllerAttachments_Patch");
+            MethodInfo patch4 = AccessTools.Method(typeof(SailInfoPatches), "UpdateControllerAttachmentsPatch");
             //clock
             MethodInfo original5 = AccessTools.Method(typeof(ShipItemClock), "ExtraLateUpdate");
             MethodInfo patch5 = AccessTools.Method(typeof(SailInfoPatches), "ClockPatch");
             MethodInfo original15 = AccessTools.Method(typeof(RopeControllerAnchor), "Start");
-            MethodInfo patch15 = AccessTools.Method(typeof(SailInfoPatches), "Capstan_Patch");
+            MethodInfo patch15 = AccessTools.Method(typeof(SailInfoPatches), "CapstanPatch");
 
             //PATCH APPLICATION
             if (winchesInfoConfig.Value)

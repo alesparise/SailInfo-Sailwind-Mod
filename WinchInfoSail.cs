@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using System;
 using System.Reflection;
 using UnityEngine;
 
@@ -53,10 +54,21 @@ namespace SailInfo
             Vector3 boatVector = boatTransform.forward;    //boat direction
             Vector3 sailVector = sailComponent.squareSail ? sailTransform.up : -sailTransform.right; //sailComponent "direction" since squares are made differently we use the up direction for them, otherwise the -right direction (also known as left)
 
-            int angle = Mathf.RoundToInt(Vector3.SignedAngle(boatVector, sailVector, -Vector3.up)); //calculate the angle
+            int angle = Mathf.RoundToInt(Vector3.SignedAngle(boatVector, sailVector, Vector3.up)); //calculate the angle
 
             angle = angle > 90 ? 180 - angle : angle; //keep it in a 0° to 90° angle
             angle = angle < 0 ? -angle : angle; //keep it positive
+            return angle;
+        }
+        private static int SailDegree(Sail sail)
+        {   //gets the sail in and returns the angle wiht the boat forward direction out out                      
+            Vector3 boatVector = -GameState.currentBoat.transform.right;    //boat direction
+            Vector3 sailVector = sail.squareSail ? sail.transform.up : -sail.transform.right; //sail "direction" since squares are made differently we use the up direction for them, otherwise the -right direction (also known as left)
+
+            int angle = Mathf.RoundToInt(Vector3.SignedAngle(boatVector, sailVector, -Vector3.up)); //calculate the angle
+
+            angle = angle > 90 ? 180 - angle : angle; //keep it in a 0° to 90° angle
+            angle = angle< 0 ? -angle : angle; //keep it positive
             return angle;
         }
         private float SailEfficiency()
