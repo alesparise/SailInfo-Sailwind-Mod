@@ -107,10 +107,7 @@ namespace SailInfo
             }
             if (SailInfoMain.rudderBarConfig.Value)
             {
-                //debug: NRE here, also better to remove the GetComponent for performances probably
-                if (rudderJoint == null) Debug.LogWarning("RudderJoint is null");
-                if (rudderJoint.GetComponent<Rudder>() == null) Debug.LogWarning("RudderJoint is null");
-                text += $"\n{RudderBar(rudderJoint.GetComponent<Rudder>().currentAngle, rudderJoint.limits.max)}";
+                text += $"\n{RudderBar(rudder.currentAngle, rudderJoint.limits.max)}";
             }
             return text;
         }
