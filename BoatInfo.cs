@@ -7,13 +7,19 @@ namespace SailInfo
 {
     internal class BoatInfo : MonoBehaviour
     {
+        private Transform boat;
+
         private Rigidbody shipRigidbody;
-        private Rudder rudder;
+
         private HingeJoint rudderJoint;
+
+        private Rudder rudder;
+
 
         public void Awake()
         {
             shipRigidbody = GetComponentInParent<Rigidbody>();
+            boat = shipRigidbody.transform;
             rudder = shipRigidbody.GetComponentInChildren<Rudder>();
             rudderJoint = rudder.GetComponent<HingeJoint>();
         }
@@ -172,14 +178,14 @@ namespace SailInfo
         }
         private float BoatHeading()
         {   //calculates boat heading in an absolute frame of reference
-            float boatHeading = Vector3.SignedAngle(shipRigidbody.transform.forward, Vector3.forward, -Vector3.up);
+            float boatHeading = Vector3.SignedAngle(boat.forward, Vector3.forward, -Vector3.up);
             boatHeading = boatHeading < 0 ? boatHeading + 360f : boatHeading;
 
             return boatHeading;
         }
         private float AngleToBoat()
         {   //calculates angle between boat and apparent wind, 0 to 180°. Positive on the right, negative on the left
-            return Vector3.SignedAngle(shipRigidbody.transform.forward, GetApparentWind(), Vector3.up);
+            return Vector3.SignedAngle(boat.forward, GetApparentWind(), Vector3.up);
         }
         private float BoatSpeed()
         {   //calculates boat speed in kts
@@ -232,13 +238,13 @@ namespace SailInfo
         }
         private float Heeling()
         {   //returns boat heeling in degrees
-            float boatHeading = Vector3.SignedAngle(shipRigidbody.transform.up, Vector3.up, -Vector3.forward);
+            float boatHeading = Vector3.SignedAngle(boat.up, Vector3.up, -Vector3.forward);
 
             return boatHeading;
         }
         internal string Latitude()
         {   //get latitude
-            float lat = FloatingOriginManager.instance.GetGlobeCoords(shipRigidbody.transform).z;
+            float lat = FloatingOriginManager.instance.GetGlobeCoords(boat).z;
             if (SailInfoMain.showCoordinatesConfig.Value == CoordinateType.Decimal)
             {
                 return $"Lat: {Math.Round(lat, 2)}°";
@@ -253,7 +259,7 @@ namespace SailInfo
         }
         internal string Longitude()
         {   //get longitude
-            float lon = FloatingOriginManager.instance.GetGlobeCoords(shipRigidbody.transform).x;
+            float lon = FloatingOriginManager.instance.GetGlobeCoords(boat).x;
             if (SailInfoMain.showCoordinatesConfig.Value == CoordinateType.Decimal)
             {
                 return $"Long: {Math.Round(lon, 2)}°";
