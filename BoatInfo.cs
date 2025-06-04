@@ -15,7 +15,6 @@ namespace SailInfo
 
         private Rudder rudder;
 
-
         public void Awake()
         {
             shipRigidbody = GetComponentInParent<Rigidbody>();
@@ -172,9 +171,8 @@ namespace SailInfo
         private float WindDirection()
         {   //calculate apparent wind direction in an absolute frame of reference
             float windDirection = Vector3.SignedAngle(GetApparentWind(), -Vector3.forward, -Vector3.up);
-            windDirection = windDirection < 0 ? windDirection + 360f : windDirection;
 
-            return windDirection;
+            return windDirection < 0 ? windDirection + 360f : windDirection;
         }
         private float BoatHeading()
         {   //calculates boat heading in an absolute frame of reference
@@ -185,7 +183,7 @@ namespace SailInfo
         }
         private float AngleToBoat()
         {   //calculates angle between boat and apparent wind, 0 to 180°. Positive on the right, negative on the left
-            return Vector3.SignedAngle(boat.forward, GetApparentWind(), Vector3.up);
+            return Vector3.SignedAngle(-boat.forward, GetApparentWind(), Vector3.up);
         }
         private float BoatSpeed()
         {   //calculates boat speed in kts

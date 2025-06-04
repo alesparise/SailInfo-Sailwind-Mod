@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace SailInfo
 {
@@ -224,6 +225,7 @@ namespace SailInfo
                 //Debug.LogError("WinchInfoSail: all rope controllers are null!");
             }
         }
+        
         //WINCH RECOLORING
         public static void UpdateControllerAttachmentsPatch(Mast __instance)
         {
@@ -282,6 +284,13 @@ namespace SailInfo
                     winchColorIndex++;
                 }
             }
+        }
+
+        //TILLER COMPATIBILITY
+        private static Component GetComponentByString(GameObject obj, string component)
+        {
+            
+            return obj.GetComponent(component);
         }
     }
 }
