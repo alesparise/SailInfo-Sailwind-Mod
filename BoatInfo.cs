@@ -7,12 +7,15 @@ namespace SailInfo
 {
     internal class BoatInfo : MonoBehaviour
     {
-        Rigidbody shipRigidbody;
-        public HingeJoint rudderJoint;
+        private Rigidbody shipRigidbody;
+        private Rudder rudder;
+        private HingeJoint rudderJoint;
 
         public void Awake()
         {
             shipRigidbody = GetComponentInParent<Rigidbody>();
+            rudder = shipRigidbody.GetComponentInChildren<Rudder>();
+            rudderJoint = rudder.GetComponent<HingeJoint>();
         }
 
         public string RudderHUD()
@@ -105,6 +108,8 @@ namespace SailInfo
             if (SailInfoMain.rudderBarConfig.Value)
             {
                 //debug: NRE here, also better to remove the GetComponent for performances probably
+                if (rudderJoint == null) Debug.LogWarning("RudderJoint is null");
+                if (rudderJoint.GetComponent<Rudder>() == null) Debug.LogWarning("RudderJoint is null");
                 text += $"\n{RudderBar(rudderJoint.GetComponent<Rudder>().currentAngle, rudderJoint.limits.max)}";
             }
             return text;
