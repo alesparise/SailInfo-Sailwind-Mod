@@ -1,12 +1,5 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SailInfo
@@ -16,15 +9,15 @@ namespace SailInfo
         public Sail sailComponent;
         private string sailName;
         public SailNameType nameType;
-        FieldInfo unamplifiedForceInfo;
-        FieldInfo totalWindForceInfo;
+        FieldInfo unamplifiedForwardInfo;
+        FieldInfo unamplifiedSideInfo;
 
         public override void Awake()
         {
             base.Awake();
             //sailComponent = GetComponent<Sail>();
-            unamplifiedForceInfo = AccessTools.Field(typeof(Sail), "unamplifiedForwardForce");
-            totalWindForceInfo = AccessTools.Field(typeof(Sail), "totalWindForce");
+            unamplifiedForwardInfo = AccessTools.Field(typeof(Sail), "unamplifiedForwardForce");
+            unamplifiedSideInfo = AccessTools.Field(typeof(Sail), "unamplifiedSidewayForce");
         }
 
         public string SailName()
@@ -58,9 +51,9 @@ namespace SailInfo
         {   // Calculates the efficiency of a sailComponent trim (max is best)
 
             //This is the force created by the sailComponent
-            float unamplifiedForce = (float)unamplifiedForceInfo.GetValue(sailComponent);
+            float unamplifiedForce = (float)unamplifiedForwardInfo.GetValue(sailComponent);
             //This is the total force the wind applies to the sailComponent. This is also the maximum force forward the sailComponent can generate on the boat.
-            float totalWindForce = (float)totalWindForceInfo.GetValue(sailComponent);
+            float totalWindForce = GetTotalForce();
 
             float efficiency = Mathf.Round(unamplifiedForce / totalWindForce * 100f);
 
@@ -68,10 +61,10 @@ namespace SailInfo
         }
         private float SailInefficiency()
         {   // Calculates the percentage of sideway force on a sailComponent (min is best)
-            float unamplifiedForce = (float)unamplifiedForceInfo.GetValue(sailComponent);
+            float unamplifiedForce = (float)unamplifiedSideInfo.GetValue(sailComponent);
 
             //This is the total force the wind applies to the sailComponent. This is also the maximum force forward the sailComponent can generate on the boat.
-            float totalWindForce = (float)totalWindForceInfo.GetValue(sailComponent);
+            float totalWindForce = GetTotalForce();
 
             float inefficiency = Mathf.Abs(Mathf.Round(unamplifiedForce / totalWindForce * 100f));
 
@@ -90,6 +83,10 @@ namespace SailInfo
 
             return comb;
         }
+        private float GetTotalForce()
+        {
+            return sailComponent.appliedWindForce / sailComponent.GetCapturedForceFraction();
+        }
         public override string WinchHUD()
         {
             string description = "";
@@ -102,7 +99,7 @@ namespace SailInfo
                     amount = 1f - amount;
                 }
             }
-            
+
             if (rope is RopeControllerSailReef)
             {   //do this if it's an halyard winch
                 if (SailInfoMain.flipWinchesOutConfig.Value || SailInfoMain.sailNameConfig.Value != SailNameType.None)

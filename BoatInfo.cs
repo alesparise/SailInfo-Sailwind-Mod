@@ -73,7 +73,6 @@ namespace SailInfo
             { // ↓↓ magic number to convert chiplog knots into timescale-adjusted nm/h
                 float timeMultiplier = 80.36f * Sun.sun.initialTimescale;
                 text += $"SPD: {Mathf.Round(BoatSpeed() * timeMultiplier)} nmi/h ";
-                //text += $"SPD: {Mathf.Round(BoatSpeed() / 1.555f)} nmi/h ";
             }
             else if (SailInfoMain.boatSpeedConfig.Value == SpeedUnits.Standard)
             {

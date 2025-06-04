@@ -1,11 +1,5 @@
-﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using UnityEngine;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SailInfo
 {
@@ -35,9 +29,8 @@ namespace SailInfo
             }
             return bar;
         }
-
         private float AnchorAngle()
-        {
+        {   //calculates the angle of the anchor rope
             float angle = 0f;
             if (rope is RopeControllerAnchor anchorRope)
             {
@@ -48,7 +41,6 @@ namespace SailInfo
             }
             return angle;
         }
-
         public virtual string WinchHUD()
         {   //possibly useful ASCII characters: ████░░░░░░ ████▒▒▒▒ ■□□□□ ▄▄▄... ▀▀    ═══───
             //this adds the bar, but it's also what calls most of the other stuff
@@ -92,7 +84,6 @@ namespace SailInfo
             }
             return description;
         }
-
     }
 }
 

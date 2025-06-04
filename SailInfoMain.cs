@@ -10,6 +10,8 @@ namespace SailInfo
     /// • Giant code refactor by NAND
     /// • Changed configuration file for better readability
     /// • Added more sail names and mast names
+    /// • Topmast sail are now renamed correctly
+    /// • Added anchor info to the anchor winch
     /// 
     /// TODO: v1.3.0
     /// • Complete code rework and improvements in efficiency

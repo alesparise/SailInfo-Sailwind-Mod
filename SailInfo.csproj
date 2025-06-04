@@ -75,6 +75,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "SailInfo.dll" "C:\Program Files (x86)\Steam\steamapps\common\Sailwind\BepInEx\plugins"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "SailInfo.dll" "C:\Games\Steam\steamapps\common\Sailwind\BepInEx\plugins"</PostBuildEvent>
   </PropertyGroup>
 </Project>
