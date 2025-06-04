@@ -64,6 +64,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RudderHUD.cs" />
     <Compile Include="SailInfoPatches.cs" />
     <Compile Include="WinchInfo.cs" />
     <Compile Include="BoatInfo.cs" />

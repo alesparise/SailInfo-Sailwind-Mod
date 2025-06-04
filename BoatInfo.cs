@@ -17,9 +17,9 @@ namespace SailInfo
 
         public void Awake()
         {
-            shipRigidbody = GetComponentInParent<Rigidbody>();
-            boat = shipRigidbody.transform;
-            rudder = shipRigidbody.GetComponentInChildren<Rudder>();
+            boat = GetComponentInParent<PurchasableBoat>().transform;
+            shipRigidbody = boat.GetComponent<Rigidbody>();
+            rudder = boat.GetComponentInChildren<Rudder>();
             rudderJoint = rudder.GetComponent<HingeJoint>();
         }
 

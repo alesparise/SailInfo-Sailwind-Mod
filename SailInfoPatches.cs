@@ -21,13 +21,39 @@ namespace SailInfo
         {
             __instance.gameObject.AddComponent<WinchInfo>();
         }
-        public static void WheelUpdatePatch(GPButtonSteeringWheel __instance, ref string ___description, GoPointer ___stickyClickedBy, bool ___isLookedAt, bool ___isClicked)
-        {
-            if (___isLookedAt || ___stickyClickedBy || ___isClicked)
+        //RUDDER HUD PATCHES
+        
+        public static void RudderPatch(Rudder __instance)
+        {   //patching the rudder to find the tiller on modded boats (could patch anything but this seems fitting)
+
+            Transform boatModel = __instance.GetComponentInParent<BoatHorizon>()?.transform;
+            if (boatModel == null) return;
+            Transform tiller1;
+            Transform tiller2;
+
+            if (boatModel.name == "cutterModel")
             {
-                var component = __instance.GetComponent<BoatInfo>() ?? __instance.gameObject.AddComponent<BoatInfo>();
-                ___description = component.RudderHUD();
+                tiller1 = __instance.transform.Find("rudder_tiller_cutter");
+                tiller2 = __instance.transform.Find("rudder_tiller_cutter_center");
             }
+            else if (boatModel.name == "paraw")
+            {
+                tiller1 = boatModel.Find("hull_regular").Find("rudder_right_reg").Find("tiller_reg");
+                tiller2 = boatModel.Find("hull_extension").Find("rudder_right_ext").Find("tiller_ext");
+            }
+            else
+            {
+                GPButtonSteeringWheel[] wheels = boatModel.GetComponentsInChildren<GPButtonSteeringWheel>();
+                foreach (GPButtonSteeringWheel wheel in wheels)
+                {
+                    wheel.gameObject.AddComponent<RudderHUD>();
+                }
+
+                return;
+            }
+
+            tiller1.gameObject.AddComponent<RudderHUD>();
+            tiller2.gameObject.AddComponent<RudderHUD>();
         }
         public static string SailName(Sail currentSail, SailNameType nameType)
         {

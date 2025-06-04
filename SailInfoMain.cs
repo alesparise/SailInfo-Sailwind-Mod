@@ -124,8 +124,9 @@ namespace SailInfo
             MethodInfo original = AccessTools.Method(typeof(GPButtonRopeWinch), "Update");
             MethodInfo patch = AccessTools.Method(typeof(SailInfoPatches), "UpdatePatch");
             //rudder hud
-            MethodInfo original2 = AccessTools.Method(typeof(GPButtonSteeringWheel), "ExtraLateUpdate");
-            MethodInfo patch2 = AccessTools.Method(typeof(SailInfoPatches), "WheelUpdatePatch");
+            //tiller compatibility patch
+            MethodInfo original2b = AccessTools.Method(typeof(Rudder), "Start");
+            MethodInfo patch2b = AccessTools.Method(typeof(SailInfoPatches), "RudderPatch");
             //map winches
             MethodInfo original3 = AccessTools.Method(typeof(SailConnections), "Awake");
             MethodInfo patch3 = AccessTools.Method(typeof(SailInfoPatches), "AwakePatch");
@@ -151,7 +152,7 @@ namespace SailInfo
             }
             if (rudderHUDConfig.Value)
             {
-                harmony.Patch(original2, new HarmonyMethod(patch2)); //rudder HUD
+                harmony.Patch(original2b, new HarmonyMethod(patch2b));
             }
             //CLOCK PATCH
             harmony.Patch(original5, new HarmonyMethod(patch5));
