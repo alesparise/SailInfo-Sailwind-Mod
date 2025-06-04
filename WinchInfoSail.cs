@@ -6,17 +6,23 @@ namespace SailInfo
 {
     public class WinchInfoSail : WinchInfo
     {
+        private Transform sailTransform;
+        private Transform boatTransform;
+
         public Sail sailComponent;
+
+        private FieldInfo unamplifiedForwardInfo;
+        private FieldInfo unamplifiedSideInfo;
+        private FieldInfo totalWindForceInfo;
+
         private string sailName;
+
         public SailNameType nameType;
-        FieldInfo unamplifiedForwardInfo;
-        FieldInfo unamplifiedSideInfo;
-        FieldInfo totalWindForceInfo;
 
         public override void Awake()
         {
             base.Awake();
-            //sailComponent = GetComponent<Sail>();
+
             unamplifiedForwardInfo = AccessTools.Field(typeof(Sail), "unamplifiedForwardForce");
             unamplifiedSideInfo = AccessTools.Field(typeof(Sail), "unamplifiedSidewayForce");
             totalWindForceInfo = AccessTools.Field(typeof(Sail), "totalWindForce");
@@ -39,9 +45,13 @@ namespace SailInfo
         }
 
         private int SailDegree()
-        {   //gets the sailComponent in and returns the angle wiht the boat forward direction out out                      
-            Vector3 boatVector = sailComponent.shipRigidbody.transform.forward;    //boat direction
-            Vector3 sailVector = sailComponent.squareSail ? sailComponent.transform.up : -sailComponent.transform.right; //sailComponent "direction" since squares are made differently we use the up direction for them, otherwise the -right direction (also known as left)
+        {   //gets the sailComponent in and returns the angle wiht the boat forward direction out out
+
+            if (sailTransform == null) sailTransform = sailComponent.transform;
+            if (boatTransform == null) boatTransform = sailComponent.shipRigidbody.transform;
+
+            Vector3 boatVector = boatTransform.forward;    //boat direction
+            Vector3 sailVector = sailComponent.squareSail ? sailTransform.up : -sailTransform.right; //sailComponent "direction" since squares are made differently we use the up direction for them, otherwise the -right direction (also known as left)
 
             int angle = Mathf.RoundToInt(Vector3.SignedAngle(boatVector, sailVector, -Vector3.up)); //calculate the angle
 
@@ -56,7 +66,6 @@ namespace SailInfo
             float unamplifiedForce = (float)unamplifiedForwardInfo.GetValue(sailComponent);
             //This is the total force the wind applies to the sailComponent. This is also the maximum force forward the sailComponent can generate on the boat.
             float totalWindForce = GetTotalForce();
-
             float efficiency = Mathf.Round(unamplifiedForce / totalWindForce * 100f);
 
             return efficiency;
@@ -86,7 +95,7 @@ namespace SailInfo
             return comb;
         }
         private float GetTotalForce()
-        {
+        {   // avoid using reflections when possible to get totalWindForce
             float applied = sailComponent.appliedWindForce;
 
             if (applied == 0f)
