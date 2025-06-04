@@ -70,7 +70,6 @@
     <Compile Include="Enums.cs" />
     <Compile Include="SailInfoMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QuadrantPatches.cs" />
     <Compile Include="WinchInfoSail.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

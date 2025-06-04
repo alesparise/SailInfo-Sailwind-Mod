@@ -55,29 +55,33 @@ namespace SailInfo
                     j++;
                     mir = mir.sailBelow.GetComponent<SquareTopsailAngleMirror>() ?? null;
                 }
-                return SailInfoPatches.MastName(currentMast) + sailPrefixes[j];
+                return MastName(currentMast) + sailPrefixes[j];
             }
             if (currentSail.category == SailCategory.gaff)
             {
-                return SailInfoPatches.MastName(currentMast) + "Gaff";
+                return MastName(currentMast) + "Gaff";
             }
             if (currentSail.category == SailCategory.lateen)
             {
-                return SailInfoPatches.MastName(currentMast) + "Lateen";
+                return MastName(currentMast) + "Lateen";
             }
             if (currentSail.category == SailCategory.junk)
             {
-                return SailInfoPatches.MastName(currentMast) + "Junk";
+                return MastName(currentMast) + "Junk";
             }
             if (currentSail.category == SailCategory.other)
             {
                 if (currentSail.name.Contains("junklateen"))
                 {
-                    return SailInfoPatches.MastName(currentMast) + "Fin";
+                    return MastName(currentMast) + "Fin";
                 }
                 if (currentSail.name.Contains("lug"))
                 {
-                    return SailInfoPatches.MastName(currentMast) + "Lug";
+                    return MastName(currentMast) + "Lug";
+                }
+                if (currentSail.name.Contains("tanja"))
+                {
+                    return MastName(currentMast) + "Tanja";
                 }
             }
             if (currentSail.category == SailCategory.staysail)
@@ -90,7 +94,7 @@ namespace SailInfo
                     }
                     return "Jib";
                 }
-                return SailInfoPatches.MastName(currentMast) + "Staysail";
+                return MastName(currentMast) + "Staysail";
             }
             return "";
         }

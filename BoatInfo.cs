@@ -13,7 +13,6 @@ namespace SailInfo
     {
         Rigidbody shipRigidbody;
         public HingeJoint rudderJoint;
-        //public Rudder rudder;
 
         public void Awake()
         {
