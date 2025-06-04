@@ -11,6 +11,7 @@ namespace SailInfo
         public SailNameType nameType;
         FieldInfo unamplifiedForwardInfo;
         FieldInfo unamplifiedSideInfo;
+        FieldInfo totalWindForceInfo;
 
         public override void Awake()
         {
@@ -18,6 +19,7 @@ namespace SailInfo
             //sailComponent = GetComponent<Sail>();
             unamplifiedForwardInfo = AccessTools.Field(typeof(Sail), "unamplifiedForwardForce");
             unamplifiedSideInfo = AccessTools.Field(typeof(Sail), "unamplifiedSidewayForce");
+            totalWindForceInfo = AccessTools.Field(typeof(Sail), "totalWindForce");
         }
 
         public string SailName()
@@ -85,7 +87,14 @@ namespace SailInfo
         }
         private float GetTotalForce()
         {
-            return sailComponent.appliedWindForce / sailComponent.GetCapturedForceFraction();
+            float applied = sailComponent.appliedWindForce;
+
+            if (applied == 0f)
+            {   //use reflections to get totalWindForce instead
+                return (float)totalWindForceInfo.GetValue(sailComponent);
+            }
+
+            return applied / sailComponent.GetCapturedForceFraction();
         }
         public override string WinchHUD()
         {
