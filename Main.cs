@@ -2,20 +2,18 @@
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using UnityEngine;
 //poorly written by pr0skynesis (discord username)
 
 namespace SailInfo
 {   /// <summary>
-    /// CHANGELOG: v1.1.11
-    /// • Fixed coordinates not being accurate
-    /// • Changed coordinates to decimal system
-    /// TODO: v1.2.0
+    /// CHANGELOG: v1.2.0
+    /// • Giant code refactor by NAND
+    /// • Changed configuration file for better readability
+    /// •
+    /// 
+    /// TODO: v1.3.0
     /// • Complete code rework and improvements in efficiency
     /// • Add Center of Effort indicator in the shipyard
     /// • Improve the winch color system and sail naming system
@@ -34,7 +32,7 @@ namespace SailInfo
         // Necessary plugin info
         public const string pluginGuid = "pr0skynesis.sailinfo";
         public const string pluginName = "SailInfo";
-        public const string pluginVersion = "1.1.11"; //big wip rework should be 1.2.0 //1.1.11 was the coordinate hotfix, unreleased
+        public const string pluginVersion = "1.2.0"; //big wip rework should be 1.3.0 //1.2.0 was the coordinate NAND update
 
         //config file info
         //MAIN SWITCHES
@@ -73,8 +71,7 @@ namespace SailInfo
         //clock
         public static ConfigEntry<bool> showGlobalTimeConfig;    //displays the global time hh:mm when looking at the clock
         public static ConfigEntry<bool> showLocalTimeConfig;    //displays the local time hh:mm when looking at the clock
-        //quadrant
-        //public static ConfigEntry<bool> showLatitudeConfig;    //displays the local time hh:mm when looking at the clock
+        
         public void Awake()
         {
             #region Configuration Setup
@@ -118,7 +115,6 @@ namespace SailInfo
             showGlobalTimeConfig = Config.Bind("D) Other Items: 1. Clock", "showGlobalTime", false, "Shows exact global time in the hh:mm format when looking at a clock. Set to true to enable.");
             showLocalTimeConfig = Config.Bind("D) Other Items: 1. Clock", "showLocalTime", false, "Shows exact local time in the hh:mm format when looking at a clock. Set to true to enable.");
 
-            //showLatitudeConfig = Config.Bind("D) Other Items: 2. Quadrant", "showLatitude", false, "Shows exact local time in the hh:mm format when looking at a clock. Set to true to enable.");
             #endregion
 
             #region Patching Information
@@ -139,8 +135,6 @@ namespace SailInfo
             MethodInfo patch5 = AccessTools.Method(typeof(SailInfoPatches), "ClockPatch");
             MethodInfo original15 = AccessTools.Method(typeof(RopeControllerAnchor), "Start");
             MethodInfo patch15 = AccessTools.Method(typeof(SailInfoPatches), "Capstan_Patch");
-            //quadrant
-            //MethodInfo original6 = AccessTools.Method(typeof(ShipItemQuadrant), "ExtraLateUpdate");
 
             //PATCH APPLICATION
             if (winchesInfoConfig.Value)
@@ -156,22 +150,9 @@ namespace SailInfo
             if (rudderHUDConfig.Value)
             {
                 harmony.Patch(original2, new HarmonyMethod(patch2)); //rudder HUD
-                if (Chainloader.PluginInfos.ContainsKey("pr0skynesis.dinghies"))
-                {
-                }
-                if (Chainloader.PluginInfos.ContainsKey("pr0skynesis.paraw"))
-                {
-
-                }
             }
             //CLOCK PATCH
             harmony.Patch(original5, new HarmonyMethod(patch5));
-            //QUADRANT PATCHES
-            //NOTE: All quadrant patches are in the code, just left unpatched. Might become useful in the future
-            //harmony.Patch(original6, new HarmonyMethod(patch6));
-            //harmony.Patch(original7, new HarmonyMethod(patch7));
-            //harmony.Patch(original8, new HarmonyMethod(patch8));
-            //harmony.Patch(original9, new HarmonyMethod(patch9));
             #endregion
         }
     }
@@ -183,7 +164,6 @@ namespace SailInfo
         public static Color[] colorArray = { Color.black, Color.blue, Color.cyan, Color.gray, Color.green, Color.magenta, Color.red, Color.white, Color.yellow };
 
         //WINCHES METHODS
-        [HarmonyPrefix] //patch happens before original
         public static void Update_Patch(GPButtonRopeWinch __instance, GoPointer ___stickyClickedBy, bool ___isLookedAt, bool ___isClicked)
         {
             if (___isLookedAt || ___stickyClickedBy || ___isClicked)
@@ -191,12 +171,10 @@ namespace SailInfo
                 __instance.description = __instance.rope.GetComponent<WinchInfo>()?.WinchHUD();
             }
         }
-        [HarmonyPostfix]
         public static void Capstan_Patch(RopeControllerAnchor __instance)
         {
             __instance.gameObject.AddComponent<WinchInfo>();
         }
-        [HarmonyPostfix]
         public static void WheelUpdate_Patch(GPButtonSteeringWheel __instance, ref string ___description, GoPointer ___stickyClickedBy, bool ___isLookedAt, bool ___isClicked)
         {
             if (___isLookedAt || ___stickyClickedBy || ___isClicked)
@@ -337,8 +315,7 @@ namespace SailInfo
             winch.transform.GetComponent<MeshRenderer>().material.color = colorArray[winchColorIndex];
         }
 
-        // CLOCK, QUADRANT, SUNCOMPASS, CHRONOCOMPASS
-        [HarmonyPrefix]
+        // CLOCK
         public static void ClockPatch(ShipItemClock __instance, bool ___isLookedAt)
         {   //shows hours and minutes when looking at the clock 
             if (___isLookedAt)
@@ -375,9 +352,7 @@ namespace SailInfo
             }
         }
 
-
         //SAIL → WINCHES MAP
-        [HarmonyPostfix]
         public static void Awake_Patch(Sail ___sail, RopeController ___reefController, RopeController ___angleControllerMid, RopeController ___angleControllerLeft, RopeController ___angleControllerRight)
         {
             // Check if any rope controller is not null
@@ -405,7 +380,6 @@ namespace SailInfo
             }
         }
         //WINCH RECOLORING
-        [HarmonyPostfix]
         public static void UpdateControllerAttachments_Patch(Mast __instance)
         {
             if (GameState.currentlyLoading)
