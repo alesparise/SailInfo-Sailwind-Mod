@@ -52,7 +52,7 @@ namespace SailInfo
             if (boatTransform == null) boatTransform = sailComponent.shipRigidbody.transform;
 
             Vector3 boatVector = boatTransform.forward;    //boat direction
-            Vector3 sailVector = sailComponent.squareSail ? sailTransform.up : -sailTransform.right; //sailComponent "direction" since squares are made differently we use the up direction for them, otherwise the -right direction (also known as left)
+            Vector3 sailVector = sailComponent.squareSail ? sailTransform.up : sailTransform.right; //sailComponent "direction" since squares are made differently we use the up direction for them, otherwise the -right direction (also known as left)
 
             int angle = Mathf.RoundToInt(Vector3.SignedAngle(boatVector, sailVector, Vector3.up)); //calculate the angle
 
@@ -68,7 +68,7 @@ namespace SailInfo
             int angle = Mathf.RoundToInt(Vector3.SignedAngle(boatVector, sailVector, -Vector3.up)); //calculate the angle
 
             angle = angle > 90 ? 180 - angle : angle; //keep it in a 0° to 90° angle
-            angle = angle< 0 ? -angle : angle; //keep it positive
+            angle = angle < 0 ? -angle : angle; //keep it positive
             return angle;
         }
         private float SailEfficiency()
@@ -121,7 +121,6 @@ namespace SailInfo
         {
             string description = "";
             float amount = rope.currentLength;
-            float sailOut = Mathf.Round(amount * 100);
             if (SailInfoMain.flipWinchesOutConfig.Value && SailInfoMain.winchesOutConfig.Value != WinchOutType.None && rope is RopeControllerSailReef castedRope)
             {   //flip the X out text for reverseReefing sailComponent
                 if (castedRope.reverseReefing)
@@ -129,10 +128,11 @@ namespace SailInfo
                     amount = 1f - amount;
                 }
             }
+            float sailOut = Mathf.Round(amount * 100);
 
             if (rope is RopeControllerSailReef)
             {   //do this if it's an halyard winch
-                if (SailInfoMain.flipWinchesOutConfig.Value || SailInfoMain.sailNameConfig.Value != SailNameType.None)
+                if (SailInfoMain.sailNameConfig.Value != SailNameType.None)
                 {   //The two cases where we actually need to know what the sailComponent attached to the controller is
                     description += $"<size=70%>{SailName()} Halyard\n</size>";
                 }
@@ -147,33 +147,31 @@ namespace SailInfo
             }
             else
             {   //do this if it's a sheet winch
-                if (SailInfoMain.sailEfficiencyConfig.Value || SailInfoMain.sailForwardForceConfig.Value || SailInfoMain.sailSidewaysForceConfig.Value || SailInfoMain.sailNameConfig.Value != SailNameType.None)
-                {   //Identifies what sailComponent the controller being looked at is attached to!
-                    if (SailInfoMain.sailNameConfig.Value != SailNameType.None)
-                    {
-                        description += $"<size=70%>{SailName()}\n</size>";
-                    }
-                    if (SailInfoMain.sailEfficiencyConfig.Value)
-                    {
-                        description += $"<size=70%>Eff: {CombinedEfficiency()}% </size>";
-                    }
-                    if (SailInfoMain.sailForwardForceConfig.Value)
-                    {
-                        description += $"<size=70%>F: {SailEfficiency()}% </size>";
-                    }
-                    if (SailInfoMain.sailSidewaysForceConfig.Value)
-                    {
-                        description += $"<size=70%>S: {SailInefficiency()}% </size>";
-                    }
-                    if (SailInfoMain.winchesOutConfig.Value == WinchOutType.Degrees)
-                    {   //X° out (0° - maxAngle°)
-                        description += $"<size=70%>\n{SailDegree()}° out</size>";
-                    }
-                    else if (SailInfoMain.winchesOutConfig.Value == WinchOutType.Percent)
-                    {   //X out (0-100)
-                        description += $"<size=70%>\n{sailOut} out</size>";
-                    }
+                if (SailInfoMain.sailNameConfig.Value != SailNameType.None)
+                {
+                    description += $"<size=70%>{SailName()}\n</size>";
                 }
+                if (SailInfoMain.sailEfficiencyConfig.Value)
+                {
+                    description += $"<size=70%>Eff: {CombinedEfficiency()}% </size>";
+                }
+                if (SailInfoMain.sailForwardForceConfig.Value)
+                {
+                    description += $"<size=70%>F: {SailEfficiency()}% </size>";
+                }
+                if (SailInfoMain.sailSidewaysForceConfig.Value)
+                {
+                    description += $"<size=70%>S: {SailInefficiency()}% </size>";
+                }
+                if (SailInfoMain.winchesOutConfig.Value == WinchOutType.Degrees)
+                {   //X° out (0° - maxAngle°)
+                    description += $"<size=70%>\n{SailDegree()}° out</size>";
+                }
+                else if (SailInfoMain.winchesOutConfig.Value == WinchOutType.Percent)
+                {   //X out (0-100)
+                    description += $"<size=70%>\n{sailOut} out</size>";
+                }
+
                 if (SailInfoMain.winchesBarConfig.Value)
                 {
                     description += $"\n<size=3%>{Bar(amount)}</size>";
