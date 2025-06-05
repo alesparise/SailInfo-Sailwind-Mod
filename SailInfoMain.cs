@@ -33,7 +33,7 @@ namespace SailInfo
         // Necessary plugin info
         public const string pluginGuid = "pr0skynesis.sailinfo";
         public const string pluginName = "SailInfo";
-        public const string pluginVersion = "1.2.0"; //big wip rework should be 1.3.0 //1.2.0 was the coordinate NAND update
+        public const string pluginVersion = "1.2.1"; //big rework should be 1.3.0 //1.2.1 was the winchesOut, flipWinchesOut and SailDegree fix
 
         //config file info
         //MAIN SWITCHES
